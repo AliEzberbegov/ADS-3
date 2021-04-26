@@ -73,12 +73,10 @@ for (int i = 0; i < inf.length(); i++) {
 
 int eval(std::string pst) {
   TStack <int> MyStack2;
-  std::string total2;
   int amount;
   for (int i = 0; i < pst.length(); i++) {
     if (pst[i] >= '0' && pst[i] <= '9') {
         MyStack2.push(pst[i] - '0');
-        total2 = pst[i];
     }
     else if (pst[i] != ' ') {
       int val2 = MyStack2.get();
