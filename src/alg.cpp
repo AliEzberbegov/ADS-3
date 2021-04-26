@@ -92,7 +92,7 @@ int eval(std::string pst) {
       else if (pst[i] == '+') {
         MyStack2.push(val1 + val2);
       }
-      else {
+      else if (pst[i] == '-') {
         MyStack2.push(val1 - val2);
       }
     }
