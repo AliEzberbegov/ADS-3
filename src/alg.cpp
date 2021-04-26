@@ -83,17 +83,16 @@ int eval(std::string pst) {
       MyStack2.pop();
       int val1 = MyStack2.get();
       MyStack2.pop();
-      if (pst[i] == '*') {
-        MyStack2.push(val1 * val2);
-      }
-      else if (pst[i] == '/') {
-        MyStack2.push(val1 / val2);
-      }
-      else if (pst[i] == '+') {
-        MyStack2.push(val1 + val2);
-      }
-      else if (pst[i] == '-') {
-        MyStack2.push(val1 - val2);
+      switch(pst[i]) {
+        case '*': MyStack2.push(val1 * val2);
+            break;
+        case '/': MyStack2.push(val1 / val2);
+            break;
+        case '+': MyStack2.push(val1 + val2);
+            break;
+        case '-': MyStack2.push(val1 - val2);
+            break;
+        default: return -1;
       }
     }
   }
