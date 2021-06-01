@@ -1,101 +1,63 @@
 // Copyright 2021 NNTU-CS
 #include <string>
+#include <map>
 #include "tstack.h"
 
-int sequence(char value) {
-    switch (value) {
-      case '(': return 0;
-          break;
-      case ')': return 1;
-          break;
-      case '+': return 2;
-          break;
-      case '-': return 2;
-          break;
-      case '*': return 3;
-          break;
-      case '/': return 3;
-          break;
-      default: return -1;
-    }
-}
-
 std::string infx2pstfx(std::string inf) {
-Tstack <char> MyStack;
-int prioritet;
-char arr;
-char begin = 0;
+  std::string tstr;
+  std::string str;
+  std::map<char, int>mp = { {'*', 3}, {'/', 3}, {'+', 2}, {'-', 2}, {'(', 1} };
 
-std::string total;
-for (int i = 0; i < inf.length(); i++) {
-   arr = inf[i];
-   prioritet = sequence(arr);
-   if (prioritet > -1) {
-            if ((prioritet == 0 || prioritet > sequence(begin) || MyStack.isEmpty()) && arr != ')') {
-                if (MyStack.isEmpty())
-                    begin = arr;
-                    MyStack.push(arr);
-            }
-            else if (arr == ')') {
-                while (MyStack.get() != '(') {
-                    total.push_back(MyStack.get());
-                    total.push_back(' ');
-                    MyStack.pop();
-                }
-                MyStack.pop();
-                if (MyStack.isEmpty())
-                    begin = 0;
-            }
-            else {
-                while (!MyStack.isEmpty() && sequence(MyStack.get()) >= prioritet) {
-                    total.push_back(MyStack.get());
-                    total.push_back(' ');
-                    MyStack.pop();
-                }
-                if (MyStack.isEmpty())
-                    begin = inf[i];
-                    MyStack.push(inf[i]);
-            }
-        }
-        else {
-            total.push_back(arr);
-            total.push_back(' ');
-        }
+  TStack<char> stack;
+  for (int i = 0; i < inf.length(); i++) {
+    if (inf[i] >= '0' && inf[i] <= '9') {
+      tstr = inf[i];
+      str += tstr + " ";
+    } else if (inf[i] == '(') {
+      stack.push(inf[i]);
+    } else if (inf[i] == ')') {
+      char top = stack.get();
+      stack.pop();
+      while (top != '(') {
+        tstr = top;
+        str += tstr + " ";
+        top = stack.get();
+        stack.pop();
+      }
+    } else {
+      while (!stack.isEmpty() && mp[stack.get()] >= mp[inf[i]]) {
+        tstr = stack.get();
+        str += tstr + " ";
+        stack.pop();
+      }
+      stack.push(inf[i]);
     }
-    while (!MyStack.isEmpty()) {
-        total.push_back(MyStack.get());
-        total.push_back(' ');
-        MyStack.pop();
   }
-  total.erase(total.end() - 1, total.end());
-  return total;
+  while (!stack.isEmpty()) {
+    tstr = stack.get();
+    str += tstr + " ";
+    stack.pop();
+  }
+  return str.substr(0, str.length()-1);
 }
-
 int eval(std::string pst) {
-  TStack <int> MyStack2;
-  int amount;
+  std::string tstr;
+  TStack<int> stack;
   for (int i = 0; i < pst.length(); i++) {
     if (pst[i] >= '0' && pst[i] <= '9') {
-        MyStack2.push(pst[i] - '0');
-    }
-    else if (pst[i] != ' ') {
-      int val2 = MyStack2.get();
-      MyStack2.pop();
-      int val1 = MyStack2.get();
-      MyStack2.pop();
-      switch(pst[i]) {
-        case '*': MyStack2.push(val1 * val2);
-            break;
-        case '/': MyStack2.push(val1 / val2);
-            break;
-        case '+': MyStack2.push(val1 + val2);
-            break;
-        case '-': MyStack2.push(val1 - val2);
-            break;
-        default: return -1;
-      }
+      tstr = pst[i];
+      stack.push(pst[i] - '0');
+    } else if (pst[i] != ' ') {
+      int se = stack.get();
+      stack.pop();
+      int fi = stack.get();
+      stack.pop();
+      if (pst[i] == '*') stack.push(fi * se);
+      else if (pst[i] == '/') stack.push(fi / se);
+      else if (pst[i] == '+') stack.push(fi + se);
+      else
+        stack.push(fi - se);
     }
   }
-  amount = MyStack2.get();
-  return amount;
+  return stack.get();
 }
